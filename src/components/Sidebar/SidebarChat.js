@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Avatar } from "@material-ui/core"
-import db from "../../firebase"
 import "./sidebarChat.css"
+import { messagesApi, roomApi } from "../../api"
 
 export const SidebarChat = ({ addNewChat, id, name }) => {
   const [seed, setSeed] = useState(0)
   const [messages, setMessages] = useState([])
   useEffect(() => {
     if (id) {
-      db.collection("rooms")
-        .doc(id)
-        .collection("messages")
-        .orderBy("timestamp", "desc")
+      messagesApi
+        .messagesInRoom(id)
         .onSnapshot(snapshot =>
           setMessages(snapshot.docs.map(doc => doc.data()))
         )
@@ -25,9 +23,8 @@ export const SidebarChat = ({ addNewChat, id, name }) => {
 
   const createChat = () => {
     const roomName = prompt("Please enter name for chat")
-
     if (roomName) {
-      db.collection("rooms").add({
+      roomApi.rooms().add({
         name: roomName
       })
     }

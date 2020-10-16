@@ -4,11 +4,10 @@ import { Avatar, IconButton } from "@material-ui/core"
 import DonutLargeIcon from "@material-ui/icons/DonutLarge"
 import ChatIcon from "@material-ui/icons/Chat"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
-import "./chat.css"
 import { InsertEmoticon, Mic } from "@material-ui/icons"
-import db from "../../firebase"
 import { useStateValue } from "../../StateProvider"
-import * as firebase from "firebase"
+import "./chat.css"
+import { messagesApi, roomApi } from "../../api"
 
 export const Chat = () => {
   const { roomId } = useParams()
@@ -20,15 +19,11 @@ export const Chat = () => {
 
   useEffect(() => {
     if (roomId) {
-      db.collection("rooms")
-        .doc(roomId)
-        .onSnapshot(snapshot => {
-          setRoomName(snapshot.data().name)
-        })
-      db.collection("rooms")
-        .doc(roomId)
-        .collection("messages")
-        .orderBy("timestamp", "asc")
+      roomApi.roomById(roomId).onSnapshot(snapshot => {
+        setRoomName(snapshot.data().name)
+      })
+      messagesApi
+        .messagesInRoom(roomId)
         .onSnapshot(snapshot =>
           setMessages(snapshot.docs.map(doc => doc.data()))
         )
@@ -41,11 +36,7 @@ export const Chat = () => {
 
   const sendMessage = e => {
     e.preventDefault()
-    db.collection("rooms").doc(roomId).collection("messages").add({
-      message: input,
-      name: user.displayName,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    })
+    messagesApi.addMessage({ roomId, user, message: input })
     setInput("")
   }
 

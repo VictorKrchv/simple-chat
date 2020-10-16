@@ -9,6 +9,7 @@ export const actionTypes = {
 export const reducer = (state, action) => {
   switch (action.type) {
     case actionTypes.SET_USER: {
+      console.log(action.user)
       return {
         ...state,
         user: action.user
@@ -18,3 +19,8 @@ export const reducer = (state, action) => {
       return state
   }
 }
+
+export const setCurrentUser = user => ({
+  type: actionTypes.SET_USER,
+  user
+})
