@@ -21,6 +21,7 @@ export const messagesApi = {
   addMessage({ roomId, message, user }) {
     return db.collection("rooms").doc(roomId).collection("messages").add({
       message,
+      uid: user.uid,
       name: user.displayName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
@@ -31,10 +32,10 @@ export const authApi = {
   loginWithGoogle() {
     return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
   },
+  loginWithFacebook() {
+    return auth.signInWithPopup(new firebase.auth.FacebookAuthProvider())
+  },
   logout() {
     return auth.signOut()
-  },
-  loginWithToken() {
-    return auth.to
   }
 }

@@ -5,13 +5,17 @@ import ChatIcon from "@material-ui/icons/Chat"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
 import { SearchOutlined } from "@material-ui/icons"
 import { SidebarChat } from "./SidebarChat"
-import "./sidebar.css"
 import { useStateValue } from "../../StateProvider"
-import { roomApi } from "../../api"
+import { authApi, roomApi } from "../../api"
+import MenuItem from "@material-ui/core/MenuItem"
+import Menu from "@material-ui/core/Menu"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import "./sidebar.css"
 
 export const Sidebar = () => {
   const [{ user }] = useStateValue()
   const [rooms, setRooms] = useState([])
+  const classes = useStyles()
 
   useEffect(() => {
     const unsubscribe = roomApi.rooms()
@@ -23,8 +27,19 @@ export const Sidebar = () => {
         }))
       )
     )
-    return () => unsubscribe()
   }, [])
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  const logoutHandler = () => {
+    authApi.logout()
+    setAnchorEl(null)
+  }
 
   return (
     <div className="sidebar">
@@ -42,9 +57,23 @@ export const Sidebar = () => {
           <IconButton>
             <ChatIcon />
           </IconButton>
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
+          <div>
+            <IconButton onClick={handleClick}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              className={classes.menu}
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+            </Menu>
+          </div>
         </div>
       </div>
       <div className="sidebar__search">
@@ -62,3 +91,9 @@ export const Sidebar = () => {
     </div>
   )
 }
+
+const useStyles = makeStyles(theme => ({
+  menu: {
+    marginTop: "50px"
+  }
+}))

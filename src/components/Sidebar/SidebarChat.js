@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Avatar } from "@material-ui/core"
-import "./sidebarChat.css"
 import { messagesApi, roomApi } from "../../api"
+import "./sidebarChat.css"
 
 export const SidebarChat = ({ addNewChat, id, name }) => {
   const [seed, setSeed] = useState(0)
