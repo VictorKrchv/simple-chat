@@ -40,7 +40,6 @@ export const Sidebar = () => {
     authApi.logout()
     setAnchorEl(null)
   }
-
   return (
     <div className="sidebar">
       <div className="sidebar__header">
@@ -85,7 +84,12 @@ export const Sidebar = () => {
       <div className="sidebar__chats">
         <SidebarChat addNewChat />
         {rooms.map(room => (
-          <SidebarChat key={room.id} id={room.id} name={room.data.name} />
+          <SidebarChat
+            key={room.id}
+            id={room.id}
+            logo={room.data.logo}
+            name={room.data.name}
+          />
         ))}
       </div>
     </div>
