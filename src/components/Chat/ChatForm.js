@@ -7,6 +7,7 @@ export const ChatForm = ({ roomId, user }) => {
 
   const sendMessage = e => {
     e.preventDefault()
+    if (input === "") return
     messagesApi.addMessage({ roomId, user, message: input })
     setInput("")
   }

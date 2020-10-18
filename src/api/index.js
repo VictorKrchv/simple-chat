@@ -25,6 +25,11 @@ export const messagesApi = {
       name: user.displayName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
+  },
+  deleteMessages(roomId, messages) {
+    const messagesDb = db.collection("rooms").doc(roomId).collection("messages")
+    let requests = messages.map(message => messagesDb.doc(message).delete())
+    return Promise.all(requests)
   }
 }
 

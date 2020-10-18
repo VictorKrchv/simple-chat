@@ -3,9 +3,9 @@ import { useHistory, useParams } from "react-router-dom"
 import { useStateValue } from "../../StateProvider"
 import "./chat.css"
 import { messagesApi, roomApi } from "../../api"
-import { Message } from "./Message"
 import { ChatForm } from "./ChatForm"
 import { ChatHeader } from "./ChatHeader"
+import { MessagesList } from "./MessageList"
 
 export const Chat = () => {
   const { roomId } = useParams()
@@ -24,16 +24,19 @@ export const Chat = () => {
           return history.push("/rooms")
         }
       })
-      messagesApi
-        .messagesInRoom(roomId)
-        .onSnapshot(snapshot =>
-          setMessages(snapshot.docs.map(doc => doc.data()))
+      messagesApi.messagesInRoom(roomId).onSnapshot(snapshot =>
+        setMessages(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
         )
+      )
     } else {
       setMessages([])
       setRoom(null)
     }
-  }, [roomId])
+  }, [roomId, history])
 
   return (
     <div className="chat">
@@ -46,15 +49,7 @@ export const Chat = () => {
           roomId={roomId}
         />
       )}
-      <div className="chat__body">
-        {messages.map(message => (
-          <Message
-            key={message.timestamp}
-            message={message}
-            userId={user.uid}
-          />
-        ))}
-      </div>
+      {<MessagesList messages={messages} />}
       {room && <ChatForm roomId={roomId} user={user} />}
     </div>
   )

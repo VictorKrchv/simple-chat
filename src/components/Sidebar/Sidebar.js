@@ -15,10 +15,10 @@ import "./sidebar.css"
 export const Sidebar = () => {
   const [{ user }] = useStateValue()
   const [rooms, setRooms] = useState([])
+  const [filter, setFilter] = useState("")
   const classes = useStyles()
 
   useEffect(() => {
-    const unsubscribe = roomApi.rooms()
     roomApi.rooms().onSnapshot(snapshot =>
       setRooms(
         snapshot.docs.map(doc => ({
@@ -78,19 +78,28 @@ export const Sidebar = () => {
       <div className="sidebar__search">
         <div className="sidebar__searchContainer">
           <SearchOutlined />
-          <input placeholder="Search or start new chat" type="text" />
+          <input
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
+            placeholder="Search or start new chat"
+            type="text"
+          />
         </div>
       </div>
       <div className="sidebar__chats">
         <SidebarChat addNewChat />
-        {rooms.map(room => (
-          <SidebarChat
-            key={room.id}
-            id={room.id}
-            logo={room.data.logo}
-            name={room.data.name}
-          />
-        ))}
+        {rooms
+          .filter(room => {
+            return room.data.name.toLowerCase().includes(filter.toLowerCase())
+          })
+          .map(room => (
+            <SidebarChat
+              key={room.id}
+              id={room.id}
+              logo={room.data.logo}
+              name={room.data.name}
+            />
+          ))}
       </div>
     </div>
   )

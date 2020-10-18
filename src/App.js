@@ -18,7 +18,7 @@ function App() {
       dispatch(setCurrentUser(user))
       setPending(false)
     })
-  }, [])
+  }, [dispatch])
 
   return (
     <div className="app">

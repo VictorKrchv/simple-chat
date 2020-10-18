@@ -1,16 +1,23 @@
-import React, { useState } from "react"
+import React from "react"
 
-export const Message = ({ message, userId }) => {
+export const Message = ({ message, userId, onClick, isSelected }) => {
   return (
-    <p
+    <div
+      onClick={onClick}
       key={message.uid}
-      className={`chat__message ${message.uid === userId && "chat__reciever"}`}
+      className={`chat__message ${isSelected ? "is-selected" : ""}`}
     >
-      <span className="chat__name">{message.name}</span>
-      {message.message}
-      <span className="chat__timestamp">
-        {new Date(message.timestamp?.toDate()).toUTCString()}
-      </span>
-    </p>
+      <div
+        className={`chat__message-wrap ${
+          message.uid === userId ? "chat__reciever" : ""
+        }`}
+      >
+        <span className="chat__name">{message.name}</span>
+        {message.message}
+        <span className="chat__timestamp">
+          {new Date(message.timestamp?.toDate()).toUTCString()}
+        </span>
+      </div>
+    </div>
   )
 }
